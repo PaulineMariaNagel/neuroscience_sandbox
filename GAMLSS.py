@@ -1,20 +1,10 @@
-# -*- coding: utf-8 -*-
+
 """
-Created on Fri Sep 18 20:22:32 2026
+GAMLSS;
+-> works with pygam; smooths curves (splines) to flexibly capture nonlinear trends whilst keeping the underlying statistics transparent 
+-> Instead of rolling quantiles, GAMLSS are used to smoothly fit the mean trajectory and the age-dependent variance.
 
-@author: pauli
-"""
-
-# -*- coding: utf-8 -*-
-"""
-Okya lets try to build a very basic GAMLSS styled model
--> works with pygam; smooths curves (so called splines) to flexibly 
-capture nonlinear trends whilst keeping the underlying statistics transparent and interpretable
--> Instead of rolling quantiles GAMLSS are used to  smoothly fit the mean 
-trajectory and the age-dependent variance.
-
-
-Very much below wiggly curve just for fun
+At the end there is an intentionally overfitted model for comparison
 """
 
 import matplotlib.pyplot as plt
@@ -32,7 +22,7 @@ def generate_gamlss_data(n=1500):
 
   # brains are heteroscedastic
   # Younger/older brains often have higher spread than mid-adulthood brains
-  # simulatng variance with age:
+  # simulating variance with age:
   age_scaled_std = 30 + 20 * (abs(age - 40) / 40)
   brain_vol = mean_vol + np.random.normal(0, 1, n) * age_scaled_std
 
@@ -52,10 +42,10 @@ if __name__ == "__main__":
   gam = LinearGAM(s(0, n_splines=10)).fit(X, y)
 
   # then generate smooth age grid for plotting predictions
-  # ERROR!!!!!! age_grid = np.linspace(3, 80, 300) 1d confused pygam understandably so...
+  # ERROR:  age_grid = np.linspace(3, 80, 300) 
   age_grid = np.linspace(3, 80, 300).reshape(
       -1, 1
-  )  # Korrigiert zu 2D (Spaltenvektor)
+  )  
 
   # Predict mean trajectory and confidence intervals (approx centiles)
   predicted_mean = gam.predict(age_grid)
@@ -107,9 +97,8 @@ if __name__ == "__main__":
   
   
   
- # okay just for fun lets try to get a very wiggly gam
- # therefore we need to overfit data and reduce smoothing
-
+ # for comparison and exploration
+ # what happens if data are overfitted or smoothing is reduced
 
 def generate_gamlss_data(n=1500):
   np.random.seed(42)
@@ -156,7 +145,6 @@ if __name__ == "__main__":
       label="Reference Cohort",
   )
 
-  # wild and convoluted mean curve
   plt.plot(
       age_grid,
       predicted_mean,
